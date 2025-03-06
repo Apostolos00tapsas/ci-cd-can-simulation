@@ -3,6 +3,7 @@
 For  CAN Bus Simulation install python can library as:
 ```
 pip install python-can can-isotp pytest allure-pytest
+pip install cantools
 ```
 
 
