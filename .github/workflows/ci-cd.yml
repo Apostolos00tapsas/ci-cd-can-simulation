@@ -23,6 +23,7 @@ jobs:
 
       - name: 📦 Install Dependencies
         run: pip install pytest python-can can-isotp
+        run: pip install cantools
 
       - name: 🧪 Run CAN Simulation Tests
         run: pytest --maxfail=1 --disable-warnings --tb=short
