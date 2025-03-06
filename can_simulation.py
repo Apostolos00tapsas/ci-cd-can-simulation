@@ -27,13 +27,14 @@ def load_dbc(dbc_path):
 # Δημιουργία CAN Bus interface
 def setup_can_bus():
     bus = can.Bus(interface="virtual", channel=0, receive_own_messages=True)
+    logging.info("✅ CAN Bus initialized (Virtual, Channel 0)")
     return bus
 
 # Αποστολή CAN μηνύματος
 def send_can_message(bus, arbitration_id, data):
     message = can.Message(arbitration_id=arbitration_id, data=data, is_extended_id=False)
     bus.send(message)
-    print(f"📤 Send CAN Bus message: ID={hex(arbitration_id)}, Data={data}")
+    logging.info(f"📤 Sent CAN Bus message: ID={hex(arbitration_id)}, Data={data}")
 
 def receive_can_message(bus, timeout=1.0):
     message = bus.recv(timeout)
@@ -47,26 +48,29 @@ def receive_can_message(bus, timeout=1.0):
 # Manually call the function with the mocked message
 def test_receive_can_message(mock_message, dbc):
     """Test function that processes a mocked CAN message."""
-    print(f"📥 Mocked CAN Message for dbc file: ID={hex(mock_message.arbitration_id)}, Raw Data={mock_message.data.hex()}")
+    logging.info(f"📥 Mocked CAN Message for dbc file: ID={hex(mock_message.arbitration_id)}, Raw Data={mock_message.data.hex()}")
     
     try:
         decoded = dbc.decode_message(mock_message.arbitration_id, mock_message.data)
-        print("🔍 Decoded Signals:")
+        logging.info("🔍 Decoded Signals:")
         for signal, value in decoded.items():
-            print(f"   - {signal}: {value}")
+            logging.info(f"   - {signal}: {value}")
     except Exception as e:
-        print(f"⚠️ Decoding Failed: {e}")
+        logging.warning(f"⚠️ Decoding Failed: {e}")
 
 
 if __name__ == "__main__":
-    dbc_path = "CSS-Electronics-OBD2-v1.4.dbc"  # Βάλε το path του .dbc αρχείου σου
-    dbc = load_dbc(dbc_path)
+    logging.info("✅ VirtualBus Created successfully.")
     bus = setup_can_bus()
     send_can_message(bus, 0x123, [0x11, 0x22, 0x33])
     time.sleep(1)
     bus.shutdown()
-    print("✅ VirtualBus shutdown successfully.")
+    logging.info("✅ VirtualBus shutdown successfully.")
+    dbc_path = "CSS-Electronics-OBD2-v1.4.dbc"  # Add dbc path.
+    logging.info("✅ Loading dbc file.")
+    dbc = load_dbc(dbc_path)
     # Simulate a CAN message with an ID and raw data
+    logging.info("✅ Creating mock message.")
     mock_message = Message(
     arbitration_id=0x7E8,  # ✅ Use the correct ID from the DBC file
     data=bytes([
